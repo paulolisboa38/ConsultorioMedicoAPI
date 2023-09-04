@@ -12,5 +12,9 @@
         public string? Telefone { get; set; }
         public Endereco? Endereco { get; set; }
         public string? Genero { get; set; }
+
+        public Medico()
+        {
+        }
     }
 }

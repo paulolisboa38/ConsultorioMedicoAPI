@@ -1,15 +1,14 @@
 ﻿namespace ConsultorioMedicoAPI.Models
 {
-    public class Medico
+    public class Paciente
     {
         public int Id { get; set; }
         public string? Nome { get; set; }
-        public string? CRM { get; set; }
-        public bool AtivoCRM { get; set; }
-        public string? Especialidade { get; set; }
+        public DateTime? DataDeNascimento{ get; set; }
+        public string? CPF { get; set; }
         public string? Telefone { get; set; }
         public Endereco? Endereco { get; set; }
-        public DateTime? DataNascimento { get; set; }
         public string? Genero { get; set; }
+        public string? Alerta { get; set; }
     }
 }

@@ -1,17 +1,28 @@
-﻿using ConsultorioMedicoAPI.DTOs;
+﻿using ConsultorioMedicoAPI.Data;
+using ConsultorioMedicoAPI.DTOs;
 using ConsultorioMedicoAPI.Models;
 using ConsultorioMedicoAPI.Service.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConsultorioMedicoAPI.Service
 {
     public class PacienteService : IPacienteService
     {
-        public Task<Paciente> CreatePacienteAsync(CreatePacienteDTO createPacienteDTO)
+        private readonly DataContext _dataContext;
+
+        public PacienteService(DataContext dataContext)
         {
-            throw new NotImplementedException();
+            _dataContext = dataContext;
         }
 
-        public Task<IEnumerable<Consulta>> GetConsultasPorPacienteIdAsync(int id)
+        public async Task<IEnumerable<Consulta>> GetConsultasPorPacienteIdAsync(int id)
+        {
+            return await _dataContext.Consultas
+                .Where(c => c.Id == id)
+                .ToListAsync();
+        }
+
+        public Task<Paciente> CreatePacienteAsync(CreatePacienteDTO createPacienteDTO)
         {
             throw new NotImplementedException();
         }

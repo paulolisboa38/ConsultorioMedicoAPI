@@ -39,6 +39,7 @@ namespace ConsultorioMedicoAPI.Service
         {
             var pacienteDataNascAprox = CalcularDataNascimentoPorIdade(idadeAcima);
             var pacientes = await _dataContext.Pacientes
+               .Include(p => p.Endereco)
                .Where(p => p.DataDeNascimento <= pacienteDataNascAprox)
                .ToListAsync();
             return pacientes;
@@ -46,52 +47,46 @@ namespace ConsultorioMedicoAPI.Service
 
         public async Task<Paciente?> CreatePacienteAsync(CreatePacienteDTO createPacienteDTO)
         {
-            if (DateTime.TryParseExact(createPacienteDTO.DataDeNascimento,"dd/MM/yyyy",
-                CultureInfo.InvariantCulture,DateTimeStyles.None,out DateTime parsedDate))
+            var endereco = new Endereco()
             {
-                var paciente = new Paciente
-                {
-                    Nome = createPacienteDTO.Nome,
-                    DataDeNascimento = parsedDate,
-                    CPF = createPacienteDTO.CPF,
-                    Telefone = createPacienteDTO.Telefone,
-                    Endereco = createPacienteDTO.Endereco,
-                    Email = createPacienteDTO.Email,
-                    Genero = createPacienteDTO.Genero,
-                    Alerta = createPacienteDTO.Alerta
-                };
-                await _dataContext.Pacientes.AddAsync(paciente);
-                await _dataContext.SaveChangesAsync();
-                return paciente;
-            }
-            else
+                CEP = createPacienteDTO.Endereco.CEP,
+                Pais = createPacienteDTO.Endereco.Pais,
+                Estado = createPacienteDTO.Endereco.Estado,
+                Cidade = createPacienteDTO.Endereco.Cidade,
+                Bairro = createPacienteDTO.Endereco.Bairro,
+                Rua = createPacienteDTO.Endereco.Rua,
+                Complemento = createPacienteDTO.Endereco.Complemento,
+                Numero = createPacienteDTO.Endereco.Numero
+            };
+
+            var paciente = new Paciente
             {
-                return null;
-            }
+                Nome = createPacienteDTO.Nome,
+                DataDeNascimento = new DateTime(
+                    createPacienteDTO.DataNascimento.Ano,
+                    createPacienteDTO.DataNascimento.Mes,
+                    createPacienteDTO.DataNascimento.Dia),
+                CPF = createPacienteDTO.CPF,
+                Telefone = createPacienteDTO.Telefone,
+                Endereco = endereco,
+                Email = createPacienteDTO.Email,
+                Genero = createPacienteDTO.Genero,
+                Alerta = createPacienteDTO.Alerta
+            };
+            await _dataContext.Pacientes.AddAsync(paciente);
+            await _dataContext.SaveChangesAsync();
+            return paciente;
         }
 
-        public async Task<Paciente?> UpdatePacienteAsync(int id,UpdatePacienteDTO updatePacienteDTO)
+        public async Task<Paciente?> UpdatePacienteTelefoneAsync(int id,UpdatePacienteTelefoneDTO updatePacienteTelefoneDTO)
         {
             var pacienteDb = await _dataContext.Pacientes.FindAsync(id);
             if (pacienteDb == null)
             {
                 return null;
             }
-            if (DateTime.TryParseExact(updatePacienteDTO.DataDeNascimento,"dd/MM/yyyy",
-                CultureInfo.InvariantCulture,DateTimeStyles.None,out DateTime parsedDate)
-                || updatePacienteDTO.DataDeNascimento == string.Empty)
-            {
-                pacienteDb.Nome = updatePacienteDTO.Nome;
-                pacienteDb.DataDeNascimento = parsedDate;
-                pacienteDb.Telefone = updatePacienteDTO.Telefone;
-                pacienteDb.Endereco = updatePacienteDTO.Endereco;
-                pacienteDb.Email = updatePacienteDTO.Email;
-                pacienteDb.Genero = updatePacienteDTO.Genero;
-                pacienteDb.Alerta = updatePacienteDTO.Alerta;
-                await _dataContext.SaveChangesAsync();
-                return pacienteDb;
-            };
-            return null;
+            pacienteDb.Telefone = updatePacienteTelefoneDTO.Telefone;
+            return pacienteDb;
         }
 
         public async Task<Paciente?> UpdatePacienteEnderecoAsync(int id,UpdatePacienteEnderecoDTO updatePacienteEnderecoDTO)

@@ -44,22 +44,22 @@ namespace ConsultorioMedicoAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Paciente>> CreatePaciente(CreatePacienteDTO createPacienteDTO)
         {
-            if (createPacienteDTO is null)
+            var paciente = await _pacienteService.CreatePacienteAsync(createPacienteDTO);
+            if (paciente is null)
             {
                 return BadRequest(new { message = $"Informe os dados corretos para cadastro." });
             }
-            var paciente = await _pacienteService.CreatePacienteAsync(createPacienteDTO);
             return Ok(paciente);
         }
 
         // 'https://localhost:7121/api/Pacientes/1
-        [HttpPut("{id}")]
-        public async Task<ActionResult<Paciente>> UpdatePaciente(int id,UpdatePacienteDTO updatePacienteDTO)
+        [HttpPut("{id}/telefone")]
+        public async Task<ActionResult<Paciente>> UpdatePaciente(int id,UpdatePacienteTelefoneDTO updatePacienteTelefoneDTO)
         {
-            var pacienteAtualizado = await _pacienteService.UpdatePacienteAsync(id,updatePacienteDTO);
+            var pacienteAtualizado = await _pacienteService.UpdatePacienteTelefoneAsync(id,updatePacienteTelefoneDTO);
             if (pacienteAtualizado is null)
             {
-                return NotFound(new { message = $"Informe os dados corretos para atualização." });
+                return NotFound(new { message = $"Paciente com o Id-{id} não encontrado para atualização." });
             }
             return Ok(pacienteAtualizado);
         }
@@ -71,7 +71,7 @@ namespace ConsultorioMedicoAPI.Controllers
             var pacienteEnderecoAtualizado = await _pacienteService.UpdatePacienteEnderecoAsync(id,updatePacienteEnderecoDTO);
             if (pacienteEnderecoAtualizado is null)
             {
-                return NotFound(new { message = $"Informe os dados corretos para atualização." });
+                return NotFound(new { message = $"Paciente com o Id-{id} não encontrado para atualização." });
             }
             return Ok(pacienteEnderecoAtualizado);
         }

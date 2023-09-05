@@ -9,7 +9,7 @@ namespace ConsultorioMedicoAPI.Service.Interfaces
         Task<IEnumerable<Consulta>> GetConsultasPorPacienteIdAsync(int id);
 
         // Obter todos os pacientes com mais de uma certa idade
-        Task<IEnumerable<Paciente>> GetPacientesPorIdadeAsync(DateTime dataNascimento);
+        Task<IEnumerable<Paciente>> GetPacientesPorIdadeAsync(int idadeAcima);
 
         // Criar um novo registro de paciente
         Task<Paciente> CreatePacienteAsync(CreatePacienteDTO createPacienteDTO);

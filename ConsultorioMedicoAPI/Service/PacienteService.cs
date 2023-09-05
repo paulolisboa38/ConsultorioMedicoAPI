@@ -22,12 +22,28 @@ namespace ConsultorioMedicoAPI.Service
                 .ToListAsync();
         }
 
-        public Task<Paciente> CreatePacienteAsync(CreatePacienteDTO createPacienteDTO)
+        private static DateTime CalcularDataNascimentoPorIdade(int idade)
         {
-            throw new NotImplementedException();
+            DateTime hoje = DateTime.Today;
+            DateTime dataNascimento = new DateTime(hoje.Year - idade,hoje.Month,hoje.Day);
+            if (hoje.Month < dataNascimento.Month ||
+               (hoje.Month == dataNascimento.Month && hoje.Day < dataNascimento.Day))
+            {
+                dataNascimento = dataNascimento.AddYears(-1);
+            }
+            return dataNascimento;
         }
 
-        public Task<IEnumerable<Paciente>> GetPacientesPorIdadeAsync(DateTime dataNascimento)
+        public async Task<IEnumerable<Paciente>> GetPacientesPorIdadeAsync(int idadeAcima)
+        {
+            var pacienteDataNascAprox = CalcularDataNascimentoPorIdade(idadeAcima);
+            var pacientes = await _dataContext.Pacientes
+               .Where(p => p.DataDeNascimento >= pacienteDataNascAprox)
+               .ToListAsync();
+            return pacientes;
+        }
+
+        public Task<Paciente> CreatePacienteAsync(CreatePacienteDTO createPacienteDTO)
         {
             throw new NotImplementedException();
         }

@@ -56,12 +56,24 @@ namespace ConsultorioMedicoAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<Paciente>> UpdatePaciente(int id,UpdatePacienteDTO updatePacienteDTO)
         {
-            if (updatePacienteDTO is null)
-            {
-                return BadRequest(new { message = $"Informe os dados corretos para atualização." });
-            }
             var pacienteAtualizado = await _pacienteService.UpdatePacienteAsync(id,updatePacienteDTO);
+            if (pacienteAtualizado is null)
+            {
+                return NotFound(new { message = $"Informe os dados corretos para atualização." });
+            }
             return Ok(pacienteAtualizado);
+        }
+
+        // https://localhost:7121/api/Pacientes/1
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<Paciente?>> UpdatePacienteEndereco(int id,UpdatePacienteEnderecoDTO updatePacienteEnderecoDTO)
+        {
+            var pacienteEnderecoAtualizado = await _pacienteService.UpdatePacienteEnderecoAsync(id,updatePacienteEnderecoDTO);
+            if (pacienteEnderecoAtualizado is null)
+            {
+                return NotFound(new { message = $"Informe os dados corretos para atualização." });
+            }
+            return Ok(pacienteEnderecoAtualizado);
         }
     }
 }

@@ -94,9 +94,27 @@ namespace ConsultorioMedicoAPI.Service
             return null;
         }
 
-        public Task<Paciente> UpdatePacienteEnderecoAsync(int id,UpdatePacienteEnderecoDTO updatePacienteEnderecoDTO)
+        public async Task<Paciente?> UpdatePacienteEnderecoAsync(int id,UpdatePacienteEnderecoDTO updatePacienteEnderecoDTO)
         {
-            throw new NotImplementedException();
+            var pacienteEnderecoDb = await _dataContext.Pacientes.FindAsync(id);
+            if (pacienteEnderecoDb is null)
+            {
+                return null;
+            }
+            if (pacienteEnderecoDb.Endereco == null || pacienteEnderecoDb.Endereco.Id == 0)
+            {
+                pacienteEnderecoDb.Endereco = new Endereco();
+            }
+            pacienteEnderecoDb.Endereco.CEP = updatePacienteEnderecoDTO.Endereco.CEP;
+            pacienteEnderecoDb.Endereco.Pais = updatePacienteEnderecoDTO.Endereco.Pais;
+            pacienteEnderecoDb.Endereco.Estado = updatePacienteEnderecoDTO.Endereco.Estado;
+            pacienteEnderecoDb.Endereco.Cidade = updatePacienteEnderecoDTO.Endereco.Cidade;
+            pacienteEnderecoDb.Endereco.Bairro = updatePacienteEnderecoDTO.Endereco.Bairro;
+            pacienteEnderecoDb.Endereco.Rua = updatePacienteEnderecoDTO.Endereco.Rua;
+            pacienteEnderecoDb.Endereco.Complemento = updatePacienteEnderecoDTO.Endereco.Complemento;
+            pacienteEnderecoDb.Endereco.Numero = updatePacienteEnderecoDTO.Endereco.Numero;
+            await _dataContext.SaveChangesAsync();
+            return pacienteEnderecoDb;
         }
     }
 }

@@ -16,8 +16,8 @@ namespace ConsultorioMedicoAPI.Controllers
             _pacienteService = pacienteService;
         }
 
-        //https://localhost:7121/api/Pacientes/1
-        [HttpGet("{id}")]
+        // https://localhost:7121/api/Pacientes/1/consultas
+        [HttpGet("{id}/consultas")]
         public async Task<ActionResult<IEnumerable<Consulta>>> GetConsultasPorPacienteId(int id)
         {
             var consultas = await _pacienteService.GetConsultasPorPacienteIdAsync(id);
@@ -28,8 +28,8 @@ namespace ConsultorioMedicoAPI.Controllers
             return Ok(consultas);
         }
 
-        //https://localhost:7121/api/Pacientes/idade_maior_que/60
-        [HttpGet("idade_maior_que/{idade}")]
+        // https://localhost:7121/api/Pacientes/idade_maior_que=60
+        [HttpGet("idade_maior_que={idade}")]
         public async Task<ActionResult<IEnumerable<Paciente>>> GetPacientesPorIdade(int idade)
         {
             var pacientes = await _pacienteService.GetPacientesPorIdadeAsync(idade);
@@ -40,6 +40,7 @@ namespace ConsultorioMedicoAPI.Controllers
             return Ok(pacientes);
         }
 
+        // https://localhost:7121/api/Pacientes
         [HttpPost]
         public async Task<ActionResult<Paciente>> CreatePaciente(CreatePacienteDTO createPacienteDTO)
         {
@@ -48,8 +49,19 @@ namespace ConsultorioMedicoAPI.Controllers
                 return BadRequest(new { message = $"Informe os dados corretos para cadastro." });
             }
             var paciente = await _pacienteService.CreatePacienteAsync(createPacienteDTO);
-            return paciente;
+            return Ok(paciente);
         }
 
+        // 'https://localhost:7121/api/Pacientes/1
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Paciente>> UpdatePaciente(int id,UpdatePacienteDTO updatePacienteDTO)
+        {
+            if (updatePacienteDTO is null)
+            {
+                return BadRequest(new { message = $"Informe os dados corretos para atualização." });
+            }
+            var pacienteAtualizado = await _pacienteService.UpdatePacienteAsync(id,updatePacienteDTO);
+            return Ok(pacienteAtualizado);
+        }
     }
 }

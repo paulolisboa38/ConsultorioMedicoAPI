@@ -15,7 +15,7 @@ namespace ConsultorioMedicoAPI.Service.Interfaces
         Task<Paciente> CreatePacienteAsync(CreatePacienteDTO createPacienteDTO);
 
         // Atualizar informações de um paciente, como o número de telefone
-        Task<Paciente> UpdatePacienteAsync(UpdatePacienteDTO updatePacienteDTO);
+        Task<Paciente> UpdatePacienteAsync(int id,UpdatePacienteDTO updatePacienteDTO);
 
         // Atualizar o endereço de um paciente específico
         Task<Paciente> UpdatePacienteEnderecoAsync(int id,UpdatePacienteEnderecoDTO updatePacienteEnderecoDTO);

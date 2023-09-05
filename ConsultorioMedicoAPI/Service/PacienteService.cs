@@ -70,9 +70,28 @@ namespace ConsultorioMedicoAPI.Service
             }
         }
 
-        public Task<Paciente> UpdatePacienteAsync(UpdatePacienteDTO updatePacienteDTO)
+        public async Task<Paciente?> UpdatePacienteAsync(int id,UpdatePacienteDTO updatePacienteDTO)
         {
-            throw new NotImplementedException();
+            var pacienteDb = await _dataContext.Pacientes.FindAsync(id);
+            if (pacienteDb == null)
+            {
+                return null;
+            }
+            if (DateTime.TryParseExact(updatePacienteDTO.DataDeNascimento,"dd/MM/yyyy",
+                CultureInfo.InvariantCulture,DateTimeStyles.None,out DateTime parsedDate)
+                || updatePacienteDTO.DataDeNascimento == string.Empty)
+            {
+                pacienteDb.Nome = updatePacienteDTO.Nome;
+                pacienteDb.DataDeNascimento = parsedDate;
+                pacienteDb.Telefone = updatePacienteDTO.Telefone;
+                pacienteDb.Endereco = updatePacienteDTO.Endereco;
+                pacienteDb.Email = updatePacienteDTO.Email;
+                pacienteDb.Genero = updatePacienteDTO.Genero;
+                pacienteDb.Alerta = updatePacienteDTO.Alerta;
+                await _dataContext.SaveChangesAsync();
+                return pacienteDb;
+            };
+            return null;
         }
 
         public Task<Paciente> UpdatePacienteEnderecoAsync(int id,UpdatePacienteEnderecoDTO updatePacienteEnderecoDTO)

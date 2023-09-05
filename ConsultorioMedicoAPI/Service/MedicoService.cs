@@ -57,9 +57,9 @@ namespace ConsultorioMedicoAPI.Service
                     AtivoCRM = novoMedico.AtivoCRM,
                     CRM = novoMedico.CRM,
                     DataNascimento = new DateTime(
-                        novoMedico.DataNascimento.ano,
-                        novoMedico.DataNascimento.mes, 
-                        novoMedico.DataNascimento.dia), 
+                        novoMedico.DataNascimento.Ano,
+                        novoMedico.DataNascimento.Mes, 
+                        novoMedico.DataNascimento.Dia), 
                     Email = novoMedico.Email,
                     Endereco = endereco,
                     Especialidade = novoMedico.Especialidade,

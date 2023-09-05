@@ -2,8 +2,8 @@
 {
     public class DataDTO
     {
-        public int dia { get; set; }
-        public int mes { get; set; }
-        public int ano { get; set; }
+        public int Dia { get; set; }
+        public int Mes { get; set; }
+        public int Ano { get; set; }
     }
 }

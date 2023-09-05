@@ -1,4 +1,5 @@
-﻿using ConsultorioMedicoAPI.Models;
+﻿using ConsultorioMedicoAPI.DTOs;
+using ConsultorioMedicoAPI.Models;
 using ConsultorioMedicoAPI.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,6 +16,7 @@ namespace ConsultorioMedicoAPI.Controllers
             _pacienteService = pacienteService;
         }
 
+        //https://localhost:7121/api/Pacientes/1
         [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<Consulta>>> GetConsultasPorPacienteId(int id)
         {
@@ -26,6 +28,7 @@ namespace ConsultorioMedicoAPI.Controllers
             return Ok(consultas);
         }
 
+        //https://localhost:7121/api/Pacientes/idade_maior_que/60
         [HttpGet("idade_maior_que/{idade}")]
         public async Task<ActionResult<IEnumerable<Paciente>>> GetPacientesPorIdade(int idade)
         {
@@ -36,5 +39,17 @@ namespace ConsultorioMedicoAPI.Controllers
             }
             return Ok(pacientes);
         }
+
+        [HttpPost]
+        public async Task<ActionResult<Paciente>> CreatePaciente(CreatePacienteDTO createPacienteDTO)
+        {
+            if (createPacienteDTO is null)
+            {
+                return BadRequest(new { message = $"Informe os dados corretos para cadastro." });
+            }
+            var paciente = await _pacienteService.CreatePacienteAsync(createPacienteDTO);
+            return paciente;
+        }
+
     }
 }

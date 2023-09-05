@@ -3,6 +3,7 @@ using ConsultorioMedicoAPI.DTOs;
 using ConsultorioMedicoAPI.Models;
 using ConsultorioMedicoAPI.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace ConsultorioMedicoAPI.Service
 {
@@ -38,14 +39,35 @@ namespace ConsultorioMedicoAPI.Service
         {
             var pacienteDataNascAprox = CalcularDataNascimentoPorIdade(idadeAcima);
             var pacientes = await _dataContext.Pacientes
-               .Where(p => p.DataDeNascimento >= pacienteDataNascAprox)
+               .Where(p => p.DataDeNascimento <= pacienteDataNascAprox)
                .ToListAsync();
             return pacientes;
         }
 
-        public Task<Paciente> CreatePacienteAsync(CreatePacienteDTO createPacienteDTO)
+        public async Task<Paciente?> CreatePacienteAsync(CreatePacienteDTO createPacienteDTO)
         {
-            throw new NotImplementedException();
+            if (DateTime.TryParseExact(createPacienteDTO.DataDeNascimento,"dd/MM/yyyy",
+                CultureInfo.InvariantCulture,DateTimeStyles.None,out DateTime parsedDate))
+            {
+                var paciente = new Paciente
+                {
+                    Nome = createPacienteDTO.Nome,
+                    DataDeNascimento = parsedDate,
+                    CPF = createPacienteDTO.CPF,
+                    Telefone = createPacienteDTO.Telefone,
+                    Endereco = createPacienteDTO.Endereco,
+                    Email = createPacienteDTO.Email,
+                    Genero = createPacienteDTO.Genero,
+                    Alerta = createPacienteDTO.Alerta
+                };
+                await _dataContext.Pacientes.AddAsync(paciente);
+                await _dataContext.SaveChangesAsync();
+                return paciente;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public Task<Paciente> UpdatePacienteAsync(UpdatePacienteDTO updatePacienteDTO)

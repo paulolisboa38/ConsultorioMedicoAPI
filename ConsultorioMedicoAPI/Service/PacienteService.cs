@@ -2,6 +2,7 @@
 using ConsultorioMedicoAPI.DTOs;
 using ConsultorioMedicoAPI.Models;
 using ConsultorioMedicoAPI.Service.Interfaces;
+using ConsultorioMedicoAPI.Utils;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 
@@ -19,7 +20,7 @@ namespace ConsultorioMedicoAPI.Service
         public async Task<IEnumerable<Consulta>> GetConsultasPorPacienteIdAsync(int id)
         {
             return await _dataContext.Consultas
-                .Where(c => c.Id == id)
+                .Where(p => p.PacienteId == id)
                 .ToListAsync();
         }
 
@@ -35,9 +36,13 @@ namespace ConsultorioMedicoAPI.Service
             return dataNascimento;
         }
 
-        public async Task<IEnumerable<Paciente>> GetPacientesPorIdadeAsync(int idadeAcima)
+        public async Task<IEnumerable<Paciente>?> GetPacientesPorIdadeAsync(int idadeAcima)
         {
             var pacienteDataNascAprox = CalcularDataNascimentoPorIdade(idadeAcima);
+            if (!Validadores.VerificarAnoNascimento(pacienteDataNascAprox.Year))
+            {
+                return null;
+            }
             var pacientes = await _dataContext.Pacientes
                .Include(p => p.Endereco)
                .Where(p => p.DataDeNascimento <= pacienteDataNascAprox)
@@ -91,7 +96,9 @@ namespace ConsultorioMedicoAPI.Service
 
         public async Task<Paciente?> UpdatePacienteEnderecoAsync(int id,UpdatePacienteEnderecoDTO updatePacienteEnderecoDTO)
         {
-            var pacienteEnderecoDb = await _dataContext.Pacientes.FindAsync(id);
+            var pacienteEnderecoDb = await _dataContext.Pacientes
+                .Include(e => e.Endereco)
+                .SingleOrDefaultAsync(p => p.Id == id);
             if (pacienteEnderecoDb is null)
             {
                 return null;

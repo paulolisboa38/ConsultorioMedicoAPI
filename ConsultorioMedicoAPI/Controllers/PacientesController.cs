@@ -44,6 +44,14 @@ namespace ConsultorioMedicoAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Paciente>> CreatePaciente(CreatePacienteDTO createPacienteDTO)
         {
+
+            if (Utils.Validadores.VerificarZeroNaData(createPacienteDTO.DataNascimento.Dia) ||
+                Utils.Validadores.VerificarZeroNaData(createPacienteDTO.DataNascimento.Mes) ||
+                Utils.Validadores.VerificarZeroNaData(createPacienteDTO.DataNascimento.Ano))
+            {
+                return BadRequest(new { message = "A data não pode iniciar com zero!" });
+            }
+
             var paciente = await _pacienteService.CreatePacienteAsync(createPacienteDTO);
             if (paciente is null)
             {
@@ -54,7 +62,7 @@ namespace ConsultorioMedicoAPI.Controllers
 
         // 'https://localhost:7121/api/Pacientes/1
         [HttpPut("{id}/telefone")]
-        public async Task<ActionResult<Paciente>> UpdatePaciente(int id,UpdatePacienteTelefoneDTO updatePacienteTelefoneDTO)
+        public async Task<ActionResult<Paciente>> UpdatePacienteTelefone(int id,UpdatePacienteTelefoneDTO updatePacienteTelefoneDTO)
         {
             var pacienteAtualizado = await _pacienteService.UpdatePacienteTelefoneAsync(id,updatePacienteTelefoneDTO);
             if (pacienteAtualizado is null)
@@ -65,7 +73,7 @@ namespace ConsultorioMedicoAPI.Controllers
         }
 
         // https://localhost:7121/api/Pacientes/1
-        [HttpPatch("{id}")]
+        [HttpPatch("{id}/endereco")]
         public async Task<ActionResult<Paciente?>> UpdatePacienteEndereco(int id,UpdatePacienteEnderecoDTO updatePacienteEnderecoDTO)
         {
             var pacienteEnderecoAtualizado = await _pacienteService.UpdatePacienteEnderecoAsync(id,updatePacienteEnderecoDTO);

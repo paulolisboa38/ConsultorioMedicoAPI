@@ -1,6 +1,7 @@
 ﻿using ConsultorioMedicoAPI.DTOs;
 using ConsultorioMedicoAPI.Models;
 using ConsultorioMedicoAPI.Service.Interfaces;
+using ConsultorioMedicoAPI.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ConsultorioMedicoAPI.Controllers
@@ -16,7 +17,6 @@ namespace ConsultorioMedicoAPI.Controllers
             _pacienteService = pacienteService;
         }
 
-        // https://localhost:7121/api/Pacientes/1/consultas
         [HttpGet("{id}/consultas")]
         public async Task<ActionResult<IEnumerable<Consulta>>> GetConsultasPorPacienteId(int id)
         {
@@ -28,7 +28,6 @@ namespace ConsultorioMedicoAPI.Controllers
             return Ok(consultas);
         }
 
-        // https://localhost:7121/api/Pacientes/idade_maior_que=60
         [HttpGet("idade_maior_que={idade}")]
         public async Task<ActionResult<IEnumerable<Paciente>>> GetPacientesPorIdade(int idade)
         {
@@ -40,14 +39,12 @@ namespace ConsultorioMedicoAPI.Controllers
             return Ok(pacientes);
         }
 
-        // https://localhost:7121/api/Pacientes
         [HttpPost]
         public async Task<ActionResult<Paciente>> CreatePaciente(CreatePacienteDTO createPacienteDTO)
         {
-
-            if (Utils.Validadores.VerificarZeroNaData(createPacienteDTO.DataNascimento.Dia) ||
-                Utils.Validadores.VerificarZeroNaData(createPacienteDTO.DataNascimento.Mes) ||
-                Utils.Validadores.VerificarZeroNaData(createPacienteDTO.DataNascimento.Ano))
+            if (Validadores.VerificarZeroNaData(createPacienteDTO.DataNascimento.Dia) ||
+                Validadores.VerificarZeroNaData(createPacienteDTO.DataNascimento.Mes) ||
+                Validadores.VerificarZeroNaData(createPacienteDTO.DataNascimento.Ano))
             {
                 return BadRequest(new { message = "A data não pode iniciar com zero!" });
             }
@@ -60,7 +57,6 @@ namespace ConsultorioMedicoAPI.Controllers
             return Ok(paciente);
         }
 
-        // 'https://localhost:7121/api/Pacientes/1
         [HttpPut("{id}/telefone")]
         public async Task<ActionResult<Paciente>> UpdatePacienteTelefone(int id,UpdatePacienteTelefoneDTO updatePacienteTelefoneDTO)
         {
@@ -72,7 +68,6 @@ namespace ConsultorioMedicoAPI.Controllers
             return Ok(pacienteAtualizado);
         }
 
-        // https://localhost:7121/api/Pacientes/1
         [HttpPatch("{id}/endereco")]
         public async Task<ActionResult<Paciente?>> UpdatePacienteEndereco(int id,UpdatePacienteEnderecoDTO updatePacienteEnderecoDTO)
         {

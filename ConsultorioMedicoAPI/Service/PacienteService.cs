@@ -24,21 +24,9 @@ namespace ConsultorioMedicoAPI.Service
                 .ToListAsync();
         }
 
-        private static DateTime CalcularDataNascimentoPorIdade(int idade)
-        {
-            DateTime hoje = DateTime.Today;
-            DateTime dataNascimento = new DateTime(hoje.Year - idade,hoje.Month,hoje.Day);
-            if (hoje.Month < dataNascimento.Month ||
-               (hoje.Month == dataNascimento.Month && hoje.Day < dataNascimento.Day))
-            {
-                dataNascimento = dataNascimento.AddYears(-1);
-            }
-            return dataNascimento;
-        }
-
         public async Task<IEnumerable<Paciente>?> GetPacientesPorIdadeAsync(int idadeAcima)
         {
-            var pacienteDataNascAprox = CalcularDataNascimentoPorIdade(idadeAcima);
+            var pacienteDataNascAprox = Validadores.CalcularDataNascimentoPorIdade(idadeAcima);
             if (!Validadores.VerificarAnoNascimento(pacienteDataNascAprox.Year))
             {
                 return null;

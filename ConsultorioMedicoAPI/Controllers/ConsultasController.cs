@@ -1,7 +1,7 @@
 ﻿using ConsultorioMedicoAPI.DTOs;
 using ConsultorioMedicoAPI.Models;
 using ConsultorioMedicoAPI.Service.Interfaces;
-using Microsoft.AspNetCore.Http;
+using ConsultorioMedicoAPI.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -54,9 +54,9 @@ namespace ConsultorioMedicoAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Consulta>> CriarConsultaAgendada(ConsultaDTO agendamento)
         {
-            if (Utils.Validadores.VerificarZeroNaData(agendamento.DataConsulta.Dia) ||
-                Utils.Validadores.VerificarZeroNaData(agendamento.DataConsulta.Mes) ||
-                Utils.Validadores.VerificarZeroNaData(agendamento.DataConsulta.Ano))
+            if (Validadores.VerificarZeroNaData(agendamento.DataConsulta.Dia) ||
+                Validadores.VerificarZeroNaData(agendamento.DataConsulta.Mes) ||
+                Validadores.VerificarZeroNaData(agendamento.DataConsulta.Ano))
             { return BadRequest("A data não pode iniciar com zero!"); }
 
             var consulta = await _consultaService.CriarConsultaAgendada(agendamento);

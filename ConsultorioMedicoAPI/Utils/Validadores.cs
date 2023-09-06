@@ -17,5 +17,17 @@
             }
             return true;
         }
+
+        public static DateTime CalcularDataNascimentoPorIdade(int idade)
+        {
+            DateTime hoje = DateTime.Today;
+            DateTime dataNascimento = new DateTime(hoje.Year - idade,hoje.Month,hoje.Day);
+            if (hoje.Month < dataNascimento.Month ||
+               (hoje.Month == dataNascimento.Month && hoje.Day < dataNascimento.Day))
+            {
+                dataNascimento = dataNascimento.AddYears(-1);
+            }
+            return dataNascimento;
+        }
     }
 }

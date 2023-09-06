@@ -15,19 +15,23 @@ namespace ConsultorioMedicoAPI.Service
             _dataContext = dataContext;
         }
 
-        public async Task<Consulta> BuscarConsultaPorId(int idConsulta)
+        public async Task<Consulta?> BuscarConsultaPorId(int idConsulta)
         {
-            throw new NotImplementedException();
+            return await _dataContext.Consultas.FindAsync(idConsulta);
         }
 
-        public async Task<List<Consulta>> BuscarConsultasPorData(int dia, int mes, int ano)
+        public async Task<List<Consulta>> BuscarConsultasPorData(int dia,int mes,int ano)
         {
-            throw new NotImplementedException();
+            DateTime dateTime = new(dia,mes,ano);
+            var consultas = await _dataContext.Consultas
+                .Where(c => c.DataConsulta.Date == dateTime.Date)
+                .ToListAsync();
+            return consultas;
         }
 
         public async Task<Consulta> CriarConsultaAgendada(ConsultaDTO agendamento)
         {
-            var dataAgendamento = new DateTime(agendamento.DataConsulta.Ano, agendamento.DataConsulta.Mes, agendamento.DataConsulta.Dia);
+            var dataAgendamento = new DateTime(agendamento.DataConsulta.Ano,agendamento.DataConsulta.Mes,agendamento.DataConsulta.Dia);
 
             var verificarData = await _dataContext.Consultas.FirstOrDefaultAsync(d => d.DataConsulta == dataAgendamento &&
             d.MedicoId == agendamento.MedicoId);
@@ -44,7 +48,7 @@ namespace ConsultorioMedicoAPI.Service
                 MedicoId = agendamento.MedicoId,
                 Medico = medico,
                 PacienteId = agendamento.PacienteId,
-                Paciente = paciente                
+                Paciente = paciente
             };
 
             _dataContext.Consultas.Add(consulta);

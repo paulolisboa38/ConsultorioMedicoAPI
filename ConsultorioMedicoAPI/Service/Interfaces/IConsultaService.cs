@@ -7,6 +7,7 @@ namespace ConsultorioMedicoAPI.Service.Interfaces
     {
         Task<List<Consulta>> ListarTodasConsultas();
         Task<Consulta> BuscarConsultaPorId(int idConsulta);
+        Task<List<Consulta>> BuscarConsultasPorData(int dia, int mes, int ano);
         Task<Consulta> CriarConsultaAgendada(ConsultaDTO agendamento);
         Task<bool> DeletarConsulta(int idConsulta);
     }

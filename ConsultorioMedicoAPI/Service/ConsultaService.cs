@@ -15,7 +15,12 @@ namespace ConsultorioMedicoAPI.Service
             _dataContext = dataContext;
         }
 
-        public Task<Consulta> BuscarConsultaPorId(int idConsulta)
+        public async Task<Consulta> BuscarConsultaPorId(int idConsulta)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<Consulta>> BuscarConsultasPorData(int dia, int mes, int ano)
         {
             throw new NotImplementedException();
         }

@@ -11,5 +11,11 @@
         public string? Email { get; set; }
         public string? Genero { get; set; }
         public string? Alerta { get; set; }
+        public ICollection<Consulta>? Consultas { get; set; }
+
+        public Paciente()
+        {
+            Consultas = new List<Consulta>();
+        }
     }
 }

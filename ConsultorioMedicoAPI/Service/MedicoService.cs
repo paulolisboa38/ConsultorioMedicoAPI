@@ -3,7 +3,6 @@ using ConsultorioMedicoAPI.DTOs;
 using ConsultorioMedicoAPI.Models;
 using ConsultorioMedicoAPI.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace ConsultorioMedicoAPI.Service
 {
@@ -16,17 +15,47 @@ namespace ConsultorioMedicoAPI.Service
             _dataContext = dataContext;
         }
 
-        public async Task<Medico> AtualizarEspecialidadeMedica(int id, string especialidade)
+        public async Task<Medico> AtualizarEspecialidadeMedico(int id, string especialidade)
         {
-            throw new NotImplementedException();
+            var medico = await _dataContext.Medicos.FindAsync(id);
+
+            if (medico is null) { return new Medico(); }
+
+            medico.Especialidade = especialidade;
+
+            _dataContext.Medicos.Update(medico);
+            await _dataContext.SaveChangesAsync();
+
+            return medico;
         }
 
-        public async Task<Medico> AtualizarMedico(int id, MedicoDTO medico)
+        public async Task<Medico> AtualizarMedico(int id, MedicoDTO medicoRequest)
         {
-            throw new NotImplementedException();
+            var medico = await _dataContext.Medicos.FindAsync(id);
+
+            if (medico is null) { return new Medico(); }
+
+            var dataNascimento = new DateTime(
+                medicoRequest.DataNascimento.Ano,
+                medicoRequest.DataNascimento.Mes,
+                medicoRequest.DataNascimento.Dia);
+
+            medico.Nome = medicoRequest.Nome;
+            medico.Email = medicoRequest.Email;
+            medico.Telefone = medicoRequest.Telefone;
+            medico.CRM = medicoRequest.CRM;
+            medico.AtivoCRM = medicoRequest.AtivoCRM;
+            medico.Especialidade = medicoRequest.Especialidade;
+            medico.Genero = medicoRequest.Genero;
+            medico.DataNascimento = dataNascimento;
+
+            _dataContext.Medicos.Update(medico);
+            await _dataContext.SaveChangesAsync();
+
+            return medico;
         }
 
-        public async Task<Medico> BuscarMedicoPorCRM(string crm)
+        public async Task<Medico?> BuscarMedicoPorCRM(string crm)
         {
             var medico = await _dataContext.Medicos.FirstOrDefaultAsync(m => m.CRM == crm);
 
@@ -37,19 +66,19 @@ namespace ConsultorioMedicoAPI.Service
         {
             var consultaCRM = await BuscarMedicoPorCRM(novoMedico.CRM);
 
-            if (consultaCRM is null)
+            if (consultaCRM is not null) { return new Medico(); }
+
+            var endereco = new Endereco()
             {
-                var endereco = new Endereco()
-                {
-                    CEP = novoMedico.Endereco.CEP,
-                    Pais = novoMedico.Endereco.Pais,
-                    Estado = novoMedico.Endereco.Estado,
-                    Cidade = novoMedico.Endereco.Cidade,
-                    Bairro = novoMedico.Endereco.Bairro,
-                    Rua = novoMedico.Endereco.Rua,
-                    Complemento = novoMedico.Endereco.Complemento,
-                    Numero = novoMedico.Endereco.Numero
-                };
+                CEP = novoMedico.Endereco.CEP,
+                Pais = novoMedico.Endereco.Pais,
+                Estado = novoMedico.Endereco.Estado,
+                Cidade = novoMedico.Endereco.Cidade,
+                Bairro = novoMedico.Endereco.Bairro,
+                Rua = novoMedico.Endereco.Rua,
+                Complemento = novoMedico.Endereco.Complemento,
+                Numero = novoMedico.Endereco.Numero
+            };
 
                 var medico = new Medico
                 {
@@ -67,17 +96,17 @@ namespace ConsultorioMedicoAPI.Service
                     Telefone = novoMedico.Telefone
                 };
 
-                _dataContext.Add(medico);
-                await _dataContext.SaveChangesAsync();
+            _dataContext.Add(medico);
+            await _dataContext.SaveChangesAsync();
 
-                return medico;
-            }
-            else { return new Medico(); }
+            return medico;
         }
 
-        public async Task<List<Consulta>> LIstarConsultasPorMedico(int id)
+        public async Task<List<Consulta>> ListarConsultasPorMedico(int id)
         {
-            throw new NotImplementedException();
+            var listaRetorno = await _dataContext.Consultas.Where(m => m.MedicoId == id).ToListAsync();
+
+            return listaRetorno;
         }
 
         public async Task<List<Medico>> ListarMedicoPorEspecialidade(string especialidade)
@@ -87,6 +116,21 @@ namespace ConsultorioMedicoAPI.Service
             return listaRetorno;
         }
 
+        public async Task<List<Medico>> ListarMedicosDisponiveis(int dia, int mes, int ano, string especialidade)
+        {
+            var dataConsulta = new DateTime(ano, mes, dia);
+
+            var medicosDisponiveis = await _dataContext.Medicos
+                .Where(m => m.Especialidade == especialidade)
+                .Include(m => m.Consultas)
+                .Where(m => !m.Consultas
+                    .Any(c => c.DataConsulta.Date.Year == dataConsulta.Year &&
+                              c.DataConsulta.Date.Month == dataConsulta.Month &&
+                              c.DataConsulta.Date.Day == dataConsulta.Day))
+                .ToListAsync();
+
+            return medicosDisponiveis;
+        }
         public async Task<List<Medico>> ListarTodosMedicos()
         {
             var listaRetorno = await _dataContext.Medicos.ToListAsync();

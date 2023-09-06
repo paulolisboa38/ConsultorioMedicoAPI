@@ -12,9 +12,11 @@
         public string? Telefone { get; set; }
         public Endereco? Endereco { get; set; }
         public string? Genero { get; set; }
+        public ICollection<Consulta>? Consultas { get; set; }
 
         public Medico()
         {
+            Consultas = new List<Consulta>();
         }
     }
 }

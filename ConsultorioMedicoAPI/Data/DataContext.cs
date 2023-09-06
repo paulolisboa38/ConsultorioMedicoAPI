@@ -19,13 +19,15 @@ namespace ConsultorioMedicoAPI.Data
 
             modelBuilder.Entity<Consulta>()
                 .HasOne(c => c.Medico)
-                .WithMany()
-                .HasForeignKey(c => c.MedicoId);
+                .WithMany(m => m.Consultas)
+                .HasForeignKey(c => c.MedicoId)
+                .OnDelete(DeleteBehavior.Cascade); 
 
             modelBuilder.Entity<Consulta>()
                 .HasOne(c => c.Paciente)
-                .WithMany()
-                .HasForeignKey(c => c.PacienteId);
+                .WithMany(p => p.Consultas)
+                .HasForeignKey(c => c.PacienteId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

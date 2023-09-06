@@ -8,9 +8,10 @@ namespace ConsultorioMedicoAPI.Service.Interfaces
         Task<Medico> CriarMedico(MedicoDTO medico);
         Task<List<Medico>> ListarMedicoPorEspecialidade(string especialidade);
         Task<List<Medico>> ListarTodosMedicos();
+        Task<List<Medico>> ListarMedicosDisponiveis(int dia, int mes, int ano, string especialidade);
         Task<Medico> BuscarMedicoPorCRM(string crm);
-        Task<Medico> AtualizarEspecialidadeMedica(int id, string especialidade);
+        Task<Medico> AtualizarEspecialidadeMedico(int id, string especialidade);
         Task<Medico> AtualizarMedico(int id, MedicoDTO medico);
-        Task<List<Consulta>> LIstarConsultasPorMedico(int id);
+        Task<List<Consulta>> ListarConsultasPorMedico(int id);
     }
 }

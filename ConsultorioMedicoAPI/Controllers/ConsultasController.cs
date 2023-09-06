@@ -26,7 +26,29 @@ namespace ConsultorioMedicoAPI.Controllers
             if (consultas.IsNullOrEmpty()) { return NotFound(consultas); }
 
             return Ok(consultas);
-        
+
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Consulta?>> BuscarConsultaPorId(int id)
+        {
+            var consulta = await _consultaService.BuscarConsultaPorId(id);
+            if (consulta is null)
+            {
+                return NotFound(new { message = $"Consulta com o Id-{id} não encontrada." });
+            }
+            return Ok(consulta);
+        }
+
+        [HttpGet("data={dia}-{mes}-{ano}")]
+        public async Task<ActionResult<List<Consulta>>> BuscarConsultasPorData(int dia,int mes,int ano)
+        {
+            var consultas = await _consultaService.BuscarConsultasPorData(dia,mes,ano);
+            if (consultas.IsNullOrEmpty())
+            {
+                return NotFound(new { message = $"Nenhuma consulta encontrada com a data: {dia}/{mes}/{ano}" });
+            }
+            return Ok(consultas);
         }
 
         [HttpPost]
